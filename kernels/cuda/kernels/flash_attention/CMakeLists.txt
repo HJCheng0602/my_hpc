@@ -1,0 +1,4 @@
+add_executable(flash_attention flash_attention.cu)
+target_include_directories(flash_attention PRIVATE ${CMAKE_SOURCE_DIR}/include)
+set_target_properties(flash_attention PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+add_test(NAME flash_attention COMMAND flash_attention)
