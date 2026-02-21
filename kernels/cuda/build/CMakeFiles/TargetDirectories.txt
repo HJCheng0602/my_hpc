@@ -1,7 +1,0 @@
-/home/muyilab/data/my_hpc/kernels/cuda/build/CMakeFiles/test.dir
-/home/muyilab/data/my_hpc/kernels/cuda/build/CMakeFiles/edit_cache.dir
-/home/muyilab/data/my_hpc/kernels/cuda/build/CMakeFiles/rebuild_cache.dir
-/home/muyilab/data/my_hpc/kernels/cuda/build/kernels/reduction/CMakeFiles/reduction.dir
-/home/muyilab/data/my_hpc/kernels/cuda/build/kernels/reduction/CMakeFiles/test.dir
-/home/muyilab/data/my_hpc/kernels/cuda/build/kernels/reduction/CMakeFiles/edit_cache.dir
-/home/muyilab/data/my_hpc/kernels/cuda/build/kernels/reduction/CMakeFiles/rebuild_cache.dir
