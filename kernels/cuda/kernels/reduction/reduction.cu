@@ -265,6 +265,31 @@ __global__ void reduce_v5_partial(const float* __restrict__ in,
 }
 
 
+__global__ void reduce_v6(const float* __restrict__ in,
+                                   float* __restrict__ out,
+                                   int n) {
+    float sum = 0.0f;
+    const float4* in4 = reinterpret_cast<const float4*>(in);
+    int n4 = n / 4;
+
+    for (int i = blockIdx.x * blockDim.x + threadIdx.x;
+         i < n4;
+         i += blockDim.x * gridDim.x) {
+        float4 v = in4[i];
+        sum += v.x + v.y + v.z + v.w;
+    }
+    // 处理尾部不足 4 的元素
+    int tail = n4 * 4 + threadIdx.x;
+    if (tail < n) sum += in[tail];
+
+    sum = BlockReduceSum(sum);
+    if(threadIdx.x == 0)
+    {
+        atomicAdd(out, sum);
+    }
+}
+
+
 
 
 
@@ -541,6 +566,25 @@ int main()
     ans = (float)N;
     CUDA_CHECK(cudaMemcpy(&result, d_out, sizeof(float), cudaMemcpyDeviceToHost));
     allclose("Reductionv5", &result, &ans, 1, ms);
+    printf("bandwidth: %.2f GB/s\n", (N * sizeof(float)) / (ms * 1e-3) / 1e9);
+    cudaFree(d_partial);
+    cudaFree(d_out);
+
+
+    CUDA_CHECK(cudaMalloc(&d_in, N * sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_partial, GRID * sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_out, ITERS * sizeof(float)));
+    CUDA_CHECK(cudaMemcpy(d_in, h_in, N * sizeof(float), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemset(d_out, 0, ITERS * sizeof(float)));
+    timer.Start();
+    for (int i = 0; i < ITERS; ++i)
+    {
+        reduce_v6<<<GRID1, BLOCK>>>(d_in, d_out + i, N);
+    }
+    ms = timer.Stop() / ITERS;
+    ans = (float)N;
+    CUDA_CHECK(cudaMemcpy(&result, d_out, sizeof(float), cudaMemcpyDeviceToHost));
+    allclose("Reductionv6", &result, &ans, 1, ms);
     printf("bandwidth: %.2f GB/s\n", (N * sizeof(float)) / (ms * 1e-3) / 1e9);
     cudaFree(d_partial);
     cudaFree(d_out);

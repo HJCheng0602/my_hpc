@@ -24,8 +24,8 @@ set(CMAKE_CUDA_FLAGS_DEBUG "-G -g")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # ── 子目录 ───────────────────────────────────────────────────────
-add_subdirectory(kernels/reduction)
-# add_subdirectory(kernels/scan)
+# add_subdirectory(kernels/reduction)
+add_subdirectory(kernels/scan)
 # add_subdirectory(kernels/transpose)
 # add_subdirectory(kernels/gemm)
 # add_subdirectory(kernels/conv)
